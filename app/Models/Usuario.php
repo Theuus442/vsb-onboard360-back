@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+
+class Usuario extends Authenticatable
+{
+    protected $fillable = ['nome', 'email', 'senha', 'papel', 'departamento'];
+
+    public function parceirosResponsaveis()
+    {
+        return $this->hasMany(Parceiro::class, 'responsavel_id');
+    }
+
+    public function checklistAtualizados()
+    {
+        return $this->hasMany(ChecklistParceiro::class, 'atualizado_por');
+    }
+
+    public function setSenhaAttribute($valor){
+        $this->attributes['senha'] = bcrypt($valor);
+    }
+
+}
