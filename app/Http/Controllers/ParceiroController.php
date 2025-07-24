@@ -3,30 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Parceiro;
-use Illuminate\Http\Request;
+use App\Http\Requests\ParceiroRequest;
+use App\Http\Requests\UpdateParceiroRequest;
 
 class ParceiroController extends Controller
 {
-
     public function index()
     {
         $parceiros = Parceiro::with(['checklists', 'documentos'])->paginate(10);
         return response()->json($parceiros);
     }
 
-    public function store(Request $request)
+    public function store(ParceiroRequest $request)
     {
-        $validateData = $request->validate([
-            'nome_fantasia' => 'required|string|max:50',
-            'razao_social' => 'required|string|max:150',
-            'cnpj' => 'required|string|max:20|unique:parceiros,cnpj',
-            'telefone' => 'nullable|string|max:20',
-            'email' => 'required|email|max:100|unique:parceiros,email',
-            'responsavel_id' => 'nullable|integer|exists:usuario,id',
-            'status' => 'required|in:ativo,inativo,suspenso',
-        ]);
-
-        $parceiro = Parceiro::create($validateData);
+        $validatedData = $request->validated();
+        $parceiro = Parceiro::create($validatedData);
 
         return response()->json($parceiro, 201);
     }
@@ -38,19 +29,10 @@ class ParceiroController extends Controller
         return response()->json($parceiro);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateParceiroRequest $request, $id)
     {
         $parceiro = Parceiro::findOrFail($id);
-
-        $validatedData = $request->validate([
-            'nome_fantasia' => 'required|string|max:50',
-            'razao_social' => 'required|string|max:150',
-            'cnpj' => 'required|string|max:20|unique:parceiros,cnpj,' . $id,
-            'telefone' => 'nullable|string|max:20',
-            'email' => 'required|email|max:100|unique:parceiros,email,' . $id,
-            'responsavel_id' => 'nullable|integer|exists:usuarios,id',
-            'status' => 'required|in:ativo,inativo,suspenso',
-        ]);
+        $validatedData = $request->validated();
 
         $parceiro->update($validatedData);
 
@@ -60,7 +42,6 @@ class ParceiroController extends Controller
     public function destroy(string $id)
     {
         $parceiro = Parceiro::findOrFail($id);
-
         $parceiro->status = 'inativo';
         $parceiro->save();
 
