@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * @property string $nome
+ * @property string $email
+ * @property string $senha
+ * @property string $papel
+ */
 
 class Usuario extends Authenticatable
 {
@@ -19,8 +25,8 @@ class Usuario extends Authenticatable
         return $this->hasMany(ChecklistParceiro::class, 'atualizado_por');
     }
 
-    public function setSenhaAttribute($valor){
+    public function setSenhaAttribute($valor)
+    {
         $this->attributes['senha'] = bcrypt($valor);
     }
-
 }
