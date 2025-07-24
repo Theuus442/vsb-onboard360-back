@@ -3,30 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\TarefaPadrao;
-use Illuminate\Http\Request;
+use App\Http\Requests\TarefaPadraoRequest;
+use App\Http\Requests\UpdateTarefaPadraoRequest;
 
 class TarefaPadraoController extends Controller
 {
     public function index()
     {
         $tarefas = TarefaPadrao::paginate(10);
-
         return response()->json($tarefas);
     }
 
-    public function store(Request $request)
+    public function store(TarefaPadraoRequest $request)
     {
-        $validatedData = $request->validate([
-            'titulo' => 'required|string|max:150',
-            'descricao' => 'nullable|string',
-            'ordem' => 'nullable|integer',
-            'setor_responsavel' => 'required|string|max:100',
-            'obrigatoria' => 'required|boolean',
-            'ativa' => 'required|boolean'
-        ]);
-
-        $tarefa = TarefaPadrao::create($validatedData);
-
+        $tarefa = TarefaPadrao::create($request->validated());
         return response()->json($tarefa, 201);
     }
 
@@ -41,25 +31,15 @@ class TarefaPadraoController extends Controller
         return response()->json($tarefa);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateTarefaPadraoRequest $request, $id)
     {
         $tarefa = TarefaPadrao::find($id);
 
         if (!$tarefa) {
-            return response()->json(['message' => 'Tarefa não enconrada'], 404);
+            return response()->json(['message' => 'Tarefa não encontrada'], 404);
         }
 
-        $validatedData = $request->validate([
-            'titulo' => 'sometimes|required|string|max:150',
-            'descricao' => 'nullable|string',
-            'ordem' => 'nullable|integer',
-            'setor_responsavel' => 'sometimes|required|string|max:100',
-            'obrigatoria' => 'required|boolean',
-            'ativa' => 'required|boolean',
-        ]);
-
-        $tarefa->update($validatedData);
-
+        $tarefa->update($request->validated());
         return response()->json($tarefa);
     }
 
@@ -67,7 +47,7 @@ class TarefaPadraoController extends Controller
     {
         $tarefa = TarefaPadrao::find($id);
 
-        if(!$tarefa) {
+        if (!$tarefa) {
             return response()->json(['message' => 'Tarefa não encontrada'], 404);
         }
 
