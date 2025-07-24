@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChecklistParceiroRequest;
+use App\Http\Requests\UpdateChecklistParceiroRequest;
 use App\Models\ChecklistParceiro;
 use Illuminate\Http\Request;
 
@@ -24,15 +26,9 @@ class ChecklistParceiroController extends Controller
         return response()->json($checklist);
     }
 
-    public function store(Request $request)
+    public function store(ChecklistParceiroRequest $request)
     {
-        $validatedData = $request->validate([
-            'parceiro_id' => 'required|exists:parceiros,id',
-            'tarefa_id' => 'required|exists:tarefas_padrao,id',
-            'status' => 'required|in:pendente,em_andamento,concluido,rejeitado',
-            'observacao' => 'nullable|string',
-            'atualizado_por' => 'required|exists:usuarios,id',
-        ]);
+        $validatedData = $request->validated();
 
         $checklist = ChecklistParceiro::create($validatedData);
 
@@ -46,15 +42,11 @@ class ChecklistParceiroController extends Controller
         return response()->json($checklist);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateChecklistParceiroRequest $request, $id)
     {
         $checklist = ChecklistParceiro::findOrFail($id);
 
-        $validatedData = $request->validate([
-            'status' => 'required|in:pendente,em_andamento,concluido,rejeitado',
-            'observacao' => 'nullable|string',
-            'atualizado_por' => 'required|exists:usuarios,id',
-        ]);
+        $validatedData = $request->validated();
 
         $checklist->update($validatedData);
 
