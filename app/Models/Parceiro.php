@@ -12,7 +12,7 @@ class Parceiro extends Model
         'cnpj',
         'telefone',
         'email',
-        'resposavel_id',
+        'responsavel_id',
         'status',
     ];
 
