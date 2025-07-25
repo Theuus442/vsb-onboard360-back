@@ -2,62 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateUsuarioRequest;
-use App\Http\Requests\UsuarioRequest;
-use App\Models\Usuario;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Services\UsuarioService;
+use Illuminate\Http\JsonResponse;
 
 class UsuarioController extends Controller
 {
-    public function index()
-    {
-        $usuarios = Usuario::all();
+    protected $service;
 
-        return response()->json($usuarios);
+    public function __construct(UsuarioService $service)
+    {
+        $this->service = $service;
     }
 
-    public function store(UsuarioRequest $request)
+    public function index(): JsonResponse
     {
-        $usuario = Usuario::create([
-            'nome' => $request->nome,
-            'email' => $request->email,
-            'senha' => Hash::make($request->senha),
-            'papel' => $request->papel,
+        $usuarios = $this->service->listar();
+        return response()->json($usuarios, 200);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $dados = $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|unique:usuarios,email',
+            'senha' => 'required|string|min:6',
+            'papel' => 'required|string',
+            'departamento' => 'required|string',
         ]);
+
+        $usuario = $this->service->criar($dados);
 
         return response()->json($usuario, 201);
     }
 
-    public function show(int $id)
+    public function show($id): JsonResponse
     {
-        $usuario = Usuario::findOrFail($id);
-
-        return response()->json($usuario);
+        $usuario = $this->service->buscarPorId($id);
+        return response()->json($usuario, 200);
     }
 
-    public function update(UpdateUsuarioRequest $request, int $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        $usuario = Usuario::findOrFail($id);
+        $dados = $request->validate([
+            'nome' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:usuarios,email,' . $id,
+            'senha' => 'sometimes|string|min:6',
+            'papel' => 'sometimes|string',
+            'departamento' => 'sometimes|string',
+        ]);
 
-        $usuario->nome = $request->input('nome', $usuario->nome);
-        $usuario->email = $request->input('email', $usuario->email);
-        $usuario->papel = $request->input('papel', $usuario->papel);
+        $usuario = $this->service->atualizar($id, $dados);
 
-        if ($request->filled('senha')) {
-            $usuario->senha = Hash::make($request->senha);
-        }
-
-        $usuario->save();
-
-        return response()->json($usuario);
+        return response()->json($usuario, 200);
     }
 
-    public function destroy(int $id)
+    public function destroy($id): JsonResponse
     {
-        $usuario = Usuario::findOrFail($id);
-        $usuario->delete();
+        $this->service->deletar($id);
 
-        return response()->json(['message' => 'Usuário removido']);
+        return response()->json(null, 204);
     }
 }
