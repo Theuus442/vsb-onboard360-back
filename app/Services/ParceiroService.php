@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Parceiro;
+
+class ParceiroService {
+    public function listar()
+    {
+        return Parceiro::with(['checklists', 'documentos'])->paginate(10);
+    }
+
+    public function criar(array $dados)
+    {
+        return Parceiro::create($dados);
+    }
+
+    public function buscarPorId($id)
+    {
+        return Parceiro::with(['checklists', 'documentos'])->findOrFail($id);
+    }
+
+    public function atualizar($id, array $dados)
+    {
+        $parceiro = Parceiro::findOrFail($id);
+        $parceiro->update($dados);
+        return $parceiro;
+    }
+
+    public function inativar($id)
+    {
+        $parceiro = Parceiro::findOrFail($id);
+        $parceiro->status = 'inativo';
+        $parceiro->save();
+        return $parceiro;
+    }
+}
