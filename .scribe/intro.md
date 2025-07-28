@@ -1,6 +1,6 @@
 # Introduction
 
-
+Endpoints disponíveis na API para autenticação, gerenciamento de usuários, parceiros, documentos e checklists.
 
 <aside>
     <strong>Base URL</strong>: <code>http://localhost</code>

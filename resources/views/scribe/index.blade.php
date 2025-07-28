@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Laravel API Documentation</title>
+    <title>Documentação da API Vsb Onboard360</title>
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
@@ -135,6 +135,7 @@
     <div class="dark-box"></div>
     <div class="content">
         <h1 id="introduction">Introduction</h1>
+<p>Endpoints disponíveis na API para autenticação, gerenciamento de usuários, parceiros, documentos e checklists.</p>
 <aside>
     <strong>Base URL</strong>: <code>http://localhost</code>
 </aside>
@@ -1615,7 +1616,7 @@ Must be one of:
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"status\": \"rejeitado\",
+    \"status\": \"pendente\",
     \"observacao\": \"consequatur\",
     \"atualizado_por\": \"consequatur\"
 }"
@@ -1633,7 +1634,7 @@ const headers = {
 };
 
 let body = {
-    "status": "rejeitado",
+    "status": "pendente",
     "observacao": "consequatur",
     "atualizado_por": "consequatur"
 };
@@ -1736,10 +1737,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="PUTapi-checklists--id-"
-               value="rejeitado"
+               value="pendente"
                data-component="body">
     <br>
-<p>Example: <code>rejeitado</code></p>
+<p>Example: <code>pendente</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>pendente</code></li> <li><code>em_andamento</code></li> <li><code>concluido</code></li> <li><code>rejeitado</code></li></ul>
         </div>
@@ -1894,7 +1895,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "parceiro_id=consequatur"\
     --form "nome=mqeopfuudtdsufvyvddqa"\
     --form "status=rejeitado"\
-    --form "arquivo=@C:\Users\MatheusAlvesSantana\AppData\Local\Temp\phpAF59.tmp" </code></pre></div>
+    --form "arquivo=@C:\Users\MatheusAlvesSantana\AppData\Local\Temp\php99B2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2024,7 +2025,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must not be greater than 5120 kilobytes. Example: <code>C:\Users\MatheusAlvesSantana\AppData\Local\Temp\phpAF59.tmp</code></p>
+<p>Must be a file. Must not be greater than 5120 kilobytes. Example: <code>C:\Users\MatheusAlvesSantana\AppData\Local\Temp\php99B2.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;

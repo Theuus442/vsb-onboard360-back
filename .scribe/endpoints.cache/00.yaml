@@ -618,7 +618,7 @@ endpoints:
         name: status
         description: ''
         required: true
-        example: rejeitado
+        example: pendente
         type: string
         enumValues:
           - pendente
@@ -649,7 +649,7 @@ endpoints:
         nullable: false
         custom: []
     cleanBodyParameters:
-      status: rejeitado
+      status: pendente
       observacao: consequatur
       atualizado_por: consequatur
     fileParameters: []
