@@ -5,55 +5,35 @@ namespace App\Http\Controllers;
 use App\Models\TarefaPadrao;
 use App\Http\Requests\TarefaPadraoRequest;
 use App\Http\Requests\UpdateTarefaPadraoRequest;
+use App\Services\TarefaPadraoService;
 
 class TarefaPadraoController extends Controller
 {
-    public function index()
+    protected TarefaPadraoService $service;
+
+    public function __construct(TarefaPadraoService $service)
     {
-        $tarefas = TarefaPadrao::paginate(10);
+        $this->service = $service;
+    }
+
+    public function index() {
+        $tarefas = $this->service->getAllPaginated();
         return response()->json($tarefas);
     }
 
-    public function store(TarefaPadraoRequest $request)
-    {
-        $tarefa = TarefaPadrao::create($request->validated());
+    public function store(TarefaPadraoRequest $request){
+        $tarefa = $this->service->create($request->validated());
         return response()->json($tarefa, 201);
     }
 
-    public function show($id)
-    {
-        $tarefa = TarefaPadrao::find($id);
-
-        if (!$tarefa) {
-            return response()->json(['message' => 'Tarefa não encontrada'], 404);
-        }
-
+    public function update(UpdateTarefaPadraoRequest $request, int $id) {
+        $tarefa = $this->service->update($id, $request->validated());
         return response()->json($tarefa);
     }
 
-    public function update(UpdateTarefaPadraoRequest $request, $id)
-    {
-        $tarefa = TarefaPadrao::find($id);
-
-        if (!$tarefa) {
-            return response()->json(['message' => 'Tarefa não encontrada'], 404);
-        }
-
-        $tarefa->update($request->validated());
-        return response()->json($tarefa);
+    public function destroy(int $id){
+        $this->service->deactivate($id);
+        return response()->json(["message" => "Tarefa desativada."]);
     }
 
-    public function destroy($id)
-    {
-        $tarefa = TarefaPadrao::find($id);
-
-        if (!$tarefa) {
-            return response()->json(['message' => 'Tarefa não encontrada'], 404);
-        }
-
-        $tarefa->ativa = false;
-        $tarefa->save();
-
-        return response()->json(['message' => 'Tarefa desativada com sucesso!']);
-    }
 }
