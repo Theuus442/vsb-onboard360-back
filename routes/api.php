@@ -6,3 +6,4 @@ use App\Http\Controllers\UsuarioController;
 
 Route::apiResource('usuarios', UsuarioController::class);
 Route::apiResource('tarefas-padrao', TarefaPadraoController::class);
+Route::apiResource('parceiros', \App\Http\Controllers\ParceiroController::class);
