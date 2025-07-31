@@ -7,9 +7,9 @@ use App\Http\Controllers\ChecklistParceiroController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\AuthController;
 
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 
 Route::post('/registrar', [AuthController::class, 'registrar']);
