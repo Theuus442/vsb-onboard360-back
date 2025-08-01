@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ParceiroRequest;
 use App\Http\Requests\UpdateParceiroRequest;
 use App\Services\ParceiroService;
+use Illuminate\Http\Request;
 
 class ParceiroController extends Controller
 {
@@ -46,5 +47,31 @@ class ParceiroController extends Controller
     {
         $parceiro = $this->service->inativar($id);
         return response()->json(['message' => 'Parceiro marcado como inativo com sucesso!']);
+    }
+
+    public function usuarios($parceiroId)
+    {
+        $usuarios = $this->service->listarUsuariosDoParceiro($parceiroId);
+        return response()->json($usuarios);
+    }
+
+    public function adicionarUsuario($parceiroId, Request $request)
+    {
+        $dados = $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|unique:usuarios,email',
+            'senha' => 'required|string|min:6',
+            'departamento' => 'required|string',
+        ]);
+
+        $usuario = $this->service->adicionarUsuarioAoParceiro($parceiroId, $dados);
+
+        return response()->json($usuario, 201);
+    }
+
+    public function removerUsuario($parceiroId, $usuarioId)
+    {
+        $this->service->removerUsuarioDoParceiro($parceiroId, $usuarioId);
+        return response()->json(['message' => 'Usuário removido com sucesso.']);
     }
 }

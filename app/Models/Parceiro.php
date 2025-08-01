@@ -33,7 +33,18 @@ class Parceiro extends Model
 
     public function tarefasPadrao()
     {
-        return $this->hasManyThrough(TarefaPadrao::class, ChecklistParceiro::class, 
-        'parceiro_id', 'id', 'id', 'tarefa_id');
+        return $this->hasManyThrough(
+            TarefaPadrao::class,
+            ChecklistParceiro::class,
+            'parceiro_id',
+            'id',
+            'id',
+            'tarefa_id'
+        );
+    }
+
+    public function usuarios()
+    {
+        return $this->hasMany(Usuario::class);
     }
 }

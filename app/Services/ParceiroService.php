@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\Parceiro;
+use App\Models\Usuario;
 
-class ParceiroService {
+class ParceiroService
+{
     public function listar()
     {
         return Parceiro::with(['checklists', 'documentos'])->paginate(10);
@@ -33,5 +35,24 @@ class ParceiroService {
         $parceiro->status = 'inativo';
         $parceiro->save();
         return $parceiro;
+    }
+
+    public function listarUsuariosDoParceiro($parceiroId)
+    {
+        $parceiro = Parceiro::with('usuarios')->findOrFail($parceiroId);
+        return $parceiro->usuarios;
+    }
+
+    public function adicionarUsuarioAoParceiro($parceiroId, $dados)
+    {
+        $dados['papel'] = 'parceiro';
+        $dados['parceiro_id'] = $parceiroId;
+        return Usuario::create($dados);
+    }
+
+    public function removerUsuarioDoParceiro($parceiroId, $usuarioId)
+    {
+        $usuario = Usuario::where('parceiro_id', $parceiroId)->where('id', $usuarioId)->firstOrFail();
+        $usuario->delete();
     }
 }

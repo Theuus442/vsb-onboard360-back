@@ -23,7 +23,10 @@ class AuthController extends Controller
 
         $token = $usuario->createToken('token_acesso')->plainTextToken;
 
-        return response()->json(['usuario' => $usuario, 'token' => $token]);
+        return response()->json([
+            'usuario' => $usuario,
+            'token' => $token
+        ]);
     }
 
     public function logout(Request $request)
@@ -36,21 +39,25 @@ class AuthController extends Controller
     public function registrar(Request $request)
     {
         $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'required|email|unique:usuarios,email',
-            'senha' => 'required|string|min:6',
-            'papel' => 'required|in:admin,interno,parceiro',
+            'nome'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:usuarios,email',
+            'senha'        => 'required|string|min:6',
+            'papel'        => 'required|in:admin,interno,parceiro',
             'departamento' => 'nullable|string|max:100',
         ]);
 
         $usuario = Usuario::create([
-            'nome' => $request->nome,
-            'email' => $request->email,
-            'senha' => $request->senha,
-            'papel' => $request->papel,
+            'nome'         => $request->nome,
+            'email'        => $request->email,
+            'senha'        => $request->senha,
+            'papel'        => $request->papel,
             'departamento' => $request->departamento,
+            'parceiro_id'  => $request->parceiro_id,
         ]);
 
-        return response()->json(['message' => 'Usuário registrado com sucesso', 'usuario' => $usuario], 201);
+        return response()->json([
+            'message' => 'Usuário registrado com sucesso',
+            'usuario' => $usuario
+        ], 201);
     }
 }
