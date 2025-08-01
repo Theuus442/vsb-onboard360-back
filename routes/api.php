@@ -7,13 +7,14 @@ use App\Http\Controllers\ChecklistParceiroController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\AuthController;
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/registrar', [AuthController::class, 'registrar']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    });
 });
-
-Route::post('/registrar', [AuthController::class, 'registrar']);
-
 
 Route::get('/status', function () {
     return response()->json(['status' => 'API está online!']);
