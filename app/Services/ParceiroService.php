@@ -9,7 +9,12 @@ class ParceiroService
 {
     public function listar()
     {
-        return Parceiro::with(['checklists', 'documentos'])->paginate(10);
+        return Parceiro::with([
+            'responsavel:id,id,nome,email',
+            'usuarios:id,id,nome,email,parceiro_id',
+            'checklists:id,id,parceiro_id',
+            'documentos:id,id,nome,status,parceiro_id'
+        ])->paginate(10);
     }
 
     public function criar(array $dados)

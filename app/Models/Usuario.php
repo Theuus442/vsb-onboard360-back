@@ -38,9 +38,4 @@ class Usuario extends Authenticatable
     {
         $this->attributes['senha'] = bcrypt($valor);
     }
-
-    public function parceiro()
-    {
-        return $this->belongsTo(Parceiro::class);
-    }
 }
