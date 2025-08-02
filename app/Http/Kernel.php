@@ -21,7 +21,6 @@ class Kernel extends HttpKernel
         'administrador' => \App\Http\Middleware\GarantirUsuarioAdministrador::class,
         'interno'       => \App\Http\Middleware\GarantirUsuarioInterno::class,
         'parceiro'      => \App\Http\Middleware\GarantirUsuarioParceiro::class,
-        'admin_interno' => \App\Http\Middleware\GarantirAdministradorOuInterno::class,
-
+        
     ];
 }

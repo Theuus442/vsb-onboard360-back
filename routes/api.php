@@ -44,12 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documentos/{id}/download', [DocumentoController::class, 'download']);
     });
 
-    // Alteração de status e exclusão de documentos (admin/interno)
-    Route::middleware('admin_interno')->group(function () {
+    // Alteração de status e exclusão de documentos (apenas admin)
+    Route::middleware('administrador')->group(function () {
         Route::put('/documentos/{id}/status', [DocumentoController::class, 'alterarStatus']);
         Route::delete('/documentos/{id}', [DocumentoController::class, 'destroy']);
 
-        // Rotas de parceiros (admin/interno)
+        // Rotas de parceiros (apenas admin)
         Route::get('/parceiros', [ParceiroController::class, 'index']);
         Route::post('/parceiros', [ParceiroController::class, 'store']);
         Route::get('/parceiros/{id}', [ParceiroController::class, 'show']);
