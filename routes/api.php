@@ -22,7 +22,7 @@ Route::get('/status', fn() => response()->json(['status' => 'API está online!']
 Route::middleware('auth:sanctum')->group(function () {
 
     // Usuários (apenas admin)
-    Route::middleware('administrador')->group(function () {
+    Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
         Route::get('/usuarios', [UsuarioController::class, 'index']);
         Route::post('/usuarios', [UsuarioController::class, 'store']);
         Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
@@ -43,9 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/documentos', [DocumentoController::class, 'store']);
         Route::get('/documentos/{id}/download', [DocumentoController::class, 'download']);
     });
-
     // Alteração de status e exclusão de documentos (apenas admin)
-    Route::middleware('administrador')->group(function () {
+    Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
         Route::put('/documentos/{id}/status', [DocumentoController::class, 'alterarStatus']);
         Route::delete('/documentos/{id}', [DocumentoController::class, 'destroy']);
 
