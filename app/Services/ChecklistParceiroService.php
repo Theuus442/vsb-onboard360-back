@@ -19,6 +19,24 @@ class ChecklistParceiroService
         return $query->orderBy('updated_at', 'desc')->paginate(10);
     }
 
+    public function listarFiltradoPorSetor($parceiroId, $departamento, $status = null)
+    {
+        $query = ChecklistParceiro::with(['parceiro', 'tarefaPadrao'])
+            ->where('parceiro_id', $parceiroId)
+            ->where(function ($query) use ($departamento) {
+                $query->whereNull('setor_destino')
+                    ->orWhere('setor_destino', $departamento);
+            });
+
+        if ($status) {
+            $query->where('status', $status);
+        } else {
+            $query->whereIn('status', ['pendente', 'em_andamento', 'concluido']);
+        }
+
+        return $query->orderBy('updated_at', 'desc')->paginate(10);
+    }
+
     public function criar(array $dados)
     {
         return ChecklistParceiro::create($dados);

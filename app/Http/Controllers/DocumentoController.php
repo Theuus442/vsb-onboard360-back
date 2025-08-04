@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DocumentoRequest;
 use App\Http\Requests\UpdateDocumentoRequest;
-use App\Models\Documento;
-use Illuminate\Support\Facades\Storage;
 use App\Services\DocumentoService;
+use Illuminate\Http\Request;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentoController extends Controller
 {
-
     protected $service;
 
     public function __construct(DocumentoService $service)
@@ -19,9 +18,14 @@ class DocumentoController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $documentos = $this->service->listar();
+        $usuario = Auth::user();
+
+        $documentos = $this->service->listarFiltradoPorSetor(
+            $usuario->parceiro_id,
+            $usuario->departamento
+        );
 
         return response()->json($documentos);
     }
@@ -29,7 +33,11 @@ class DocumentoController extends Controller
     public function store(DocumentoRequest $request)
     {
         try {
-            $documento = $this->service->criar($request->validated(), $request->file('arquivo'));
+            $dados = $request->validated();
+            $dados['setor_destino'] = $request->input('setor_destino');
+
+            $documento = $this->service->criar($dados, $request->file('arquivo'));
+
             return response()->json($documento, 201);
         } catch (InvalidArgumentException $erro) {
             return response()->json(['erro' => $erro->getMessage()], 422);
@@ -45,7 +53,11 @@ class DocumentoController extends Controller
     public function update(UpdateDocumentoRequest $request, $id)
     {
         $documento = $this->service->atualizarStatus($id, $request->input('status'));
-        return response()->json(['message' => 'Status atualizado', 'documento' => $documento]);
+
+        return response()->json([
+            'message' => 'Status atualizado',
+            'documento' => $documento
+        ]);
     }
 
     public function destroy(string $id)
@@ -61,6 +73,7 @@ class DocumentoController extends Controller
         if (!$caminho) {
             return response()->json(['message' => 'Arquivo não encontrado.'], 404);
         }
+
         return response()->download($caminho);
     }
 }

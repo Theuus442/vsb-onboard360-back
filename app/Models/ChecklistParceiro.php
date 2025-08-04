@@ -3,12 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ChecklistParceiro extends Model
 {
-    use SoftDeletes;
-
     protected $table = 'checklist_parceiro';
 
     protected $fillable = [
@@ -19,17 +16,18 @@ class ChecklistParceiro extends Model
         'atualizado_por',
     ];
 
-    public function parceiro(){
+    public function parceiro()
+    {
         return $this->belongsTo(Parceiro::class, 'parceiro_id');
     }
 
-    public function tarefaPadrao(){
+    public function tarefaPadrao()
+    {
         return $this->belongsTo(TarefaPadrao::class, 'tarefa_id');
     }
 
-    public function atualizadoPor(){
+    public function atualizadoPor()
+    {
         return $this->belongsTo(Usuario::class, 'atualizado_por');
     }
-
-
 }

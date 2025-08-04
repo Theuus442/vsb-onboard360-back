@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class ParceiroController extends Controller
 {
-
     protected $service;
 
     public function __construct(ParceiroService $service)
@@ -17,10 +16,24 @@ class ParceiroController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $parceiros = $this->service->listar();
-        return response()->json($parceiros);
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+        $search = $request->get('search', null);
+
+        // Passar para o serviço listar com paginação e filtro
+        $resultado = $this->service->listar($limit, $search, $page);
+
+        return response()->json([
+            'data' => $resultado->items(),
+            'pagination' => [
+                'total' => $resultado->total(),
+                'page' => $resultado->currentPage(),
+                'limit' => $resultado->perPage(),
+                'last_page' => $resultado->lastPage(),
+            ]
+        ]);
     }
 
     public function store(ParceiroRequest $request)

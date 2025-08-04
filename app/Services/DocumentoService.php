@@ -12,6 +12,17 @@ class DocumentoService
         return Documento::with('parceiro')->orderBy('created_at', 'desc')->paginate(10);
     }
 
+    public function listarFiltradoPorSetor($parceiroId, $departamento)
+    {
+        return Documento::where('parceiro_id', $parceiroId)
+            ->where(function ($query) use ($departamento) {
+                $query->whereNull('setor_destino')
+                    ->orWhere('setor_destino', $departamento);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+    }
+
     public function criar(array $dados, $arquivo)
     {
         if (!$arquivo) {
@@ -25,6 +36,7 @@ class DocumentoService
             'nome' => $dados['nome'],
             'arquivo' => $path,
             'status' => $dados['status'] ?? 'pendente',
+            'setor_destino' => $dados['setor_destino'] ?? null,
         ]);
     }
 

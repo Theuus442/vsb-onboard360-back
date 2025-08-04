@@ -7,16 +7,30 @@ use App\Models\Usuario;
 
 class ParceiroService
 {
-    public function listar()
+    public function listar($limit = 10, $page = 1, $search = '')
     {
-        return Parceiro::withCount('usuarios')
+        // Converte para inteiros seguros
+        $limit = max(1, (int) $limit);
+        $page = max(1, (int) $page);
+
+        $query = Parceiro::withCount('usuarios')
             ->with([
                 'responsavel:id,id,nome,email',
                 'usuarios:id,id,nome,email,parceiro_id',
                 'checklists:id,id,parceiro_id',
                 'documentos:id,id,nome,status,parceiro_id'
-            ])
-            ->paginate(10);
+            ]);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nome_fantasia', 'like', "%{$search}%")
+                    ->orWhere('razao_social', 'like', "%{$search}%")
+                    ->orWhere('cnpj', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->paginate($limit, ['*'], 'page', $page);
     }
 
     public function criar(array $dados)
@@ -44,6 +58,14 @@ class ParceiroService
         return $parceiro;
     }
 
+    public function toggleStatus($id)
+    {
+        $parceiro = Parceiro::findOrFail($id);
+        $parceiro->status = $parceiro->status === 'Ativa' ? 'Inativa' : 'Ativa';
+        $parceiro->save();
+        return $parceiro;
+    }
+
     public function listarUsuariosDoParceiro($parceiroId)
     {
         $parceiro = Parceiro::with('usuarios')->findOrFail($parceiroId);
@@ -54,12 +76,20 @@ class ParceiroService
     {
         $dados['papel'] = 'parceiro';
         $dados['parceiro_id'] = $parceiroId;
+
+        if (isset($dados['senha'])) {
+            $dados['senha'] = bcrypt($dados['senha']);
+        }
+
         return Usuario::create($dados);
     }
 
     public function removerUsuarioDoParceiro($parceiroId, $usuarioId)
     {
-        $usuario = Usuario::where('parceiro_id', $parceiroId)->where('id', $usuarioId)->firstOrFail();
+        $usuario = Usuario::where('parceiro_id', $parceiroId)
+            ->where('id', $usuarioId)
+            ->firstOrFail();
+
         $usuario->delete();
     }
 }
