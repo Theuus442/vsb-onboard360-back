@@ -27,6 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/usuarios', [UsuarioController::class, 'store']);
         Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
         Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
+
+        //departamentos
+        Route::get('/usuarios/departamentos', [UsuarioController::class, 'listarDepartamentos']);
     });
 
     // Checklists (interno)
@@ -43,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/documentos', [DocumentoController::class, 'store']);
         Route::get('/documentos/{id}/download', [DocumentoController::class, 'download']);
     });
+
     // Alteração de status e exclusão de documentos (apenas admin)
     Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
         Route::put('/documentos/{id}/status', [DocumentoController::class, 'alterarStatus']);

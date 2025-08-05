@@ -64,15 +64,15 @@ class UsuarioController extends Controller
         return response()->json(null, 204);
     }
 
-    // Novo método para listar departamentos
     public function listarDepartamentos(): JsonResponse
     {
         $departamentos = [
-            'Financeiro',
-            'RH',
-            'Comercial',
-            'Operações',
-            'Desenvolvimento',
+            ['label' => 'Administrativo', 'value' => 'Administrativo'],
+            ['label' => 'Financeiro', 'value' => 'Financeiro'],
+            ['label' => 'Recursos Humanos', 'value' => 'Recursos Humanos'],
+            ['label' => 'Operações', 'value' => 'Operações'],
+            ['label' => 'Desenvolvimento', 'value' => 'Desenvolvimento'],
+
         ];
 
         return response()->json($departamentos, 200);
