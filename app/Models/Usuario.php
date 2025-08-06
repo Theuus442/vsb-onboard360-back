@@ -6,36 +6,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-/**
- * @property string $nome
- * @property string $email
- * @property string $senha
- * @property string $papel
- */
-
 class Usuario extends Authenticatable
 {
     use HasApiTokens, HasFactory;
 
-    protected $fillable = ['nome', 'email', 'senha', 'papel', 'departamento'];
+    protected $fillable = [
+        'nome',
+        'email',
+        'senha',
+        'papel',
+        'departamento',
+        'parceiro_id',
+    ];
 
-    public function getAuthPassword()
-    {
-        return $this->senha;
-    }
+    protected $hidden = [
+        'senha',
+        'remember_token',
+    ];
 
-    public function parceirosResponsaveis()
-    {
-        return $this->hasMany(Parceiro::class, 'responsavel_id');
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'parceiro_id' => 'integer',
+    ];
 
-    public function checklistAtualizados()
+    public function parceiro()
     {
-        return $this->hasMany(ChecklistParceiro::class, 'atualizado_por');
-    }
-
-    public function setSenhaAttribute($valor)
-    {
-        $this->attributes['senha'] = bcrypt($valor);
+        return $this->belongsTo(Parceiro::class);
     }
 }

@@ -15,9 +15,14 @@ class UsuarioController extends Controller
         $this->service = $service;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $usuarios = $this->service->listar();
+        $pagina = $request->query('page', 1);
+        $limit = $request->query('limit', 15);
+        $filtro = $request->query('filtro', null);
+
+        $usuarios = $this->service->listar((int)$pagina, (int)$limit, $filtro);
+
         return response()->json($usuarios, 200);
     }
 
