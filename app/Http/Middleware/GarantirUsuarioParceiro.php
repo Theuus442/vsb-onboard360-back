@@ -11,11 +11,14 @@ class GarantirUsuarioParceiro
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->papel === 'parceiro') {
+        $user = Auth::user();
+
+        if ($user && $user->papel === 'parceiro' && $user->parceiro_id) {
             return $next($request);
         }
+
         return response()->json([
-            'message' => 'Acesso negado. Você não tem permissão para acessar esta rota.'
+            'message' => 'Acesso negado. Você não tem permissão para acessar esta rota ou não está vinculado a um parceiro.'
         ], 403);
     }
 }
