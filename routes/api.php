@@ -1,14 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ParceiroController;
 use App\Http\Controllers\ChecklistParceiroController;
 use App\Http\Controllers\DocumentoController;
-use App\Http\Controllers\AuthController;
 
 Route::get('/status', fn() => response()->json(['status' => 'API está online!']));
 
+/*
+|--------------------------------------------------------------------------
+| Rotas de Autenticação
+|--------------------------------------------------------------------------
+*/
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/registrar', [AuthController::class, 'registrar']);
@@ -18,12 +23,16 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-// Agrupamento autenticado
+/*
+|--------------------------------------------------------------------------
+| Rotas Protegidas por Autenticação (auth:sanctum)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Rotas de Usuários (somente administrador geral do sistema)
+    | Rotas de Usuários - Somente Administrador Geral
     |--------------------------------------------------------------------------
     */
     Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
@@ -31,13 +40,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/usuarios', [UsuarioController::class, 'store']);
         Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
         Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
-
         Route::get('/usuarios/departamentos', [UsuarioController::class, 'listarDepartamentos']);
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Rotas de Checklists (somente equipe interna)
+    | Rotas de Checklists - Equipe Interna
     |--------------------------------------------------------------------------
     */
     Route::middleware('interno')->group(function () {
@@ -48,11 +56,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Rotas do parceiro autenticado (papel: parceiro ou admin_parceiro)
+    | Rotas para Parceiros Autenticados (parceiro ou admin_parceiro)
     |--------------------------------------------------------------------------
     */
     Route::middleware('parceiro')->group(function () {
         Route::get('/meu-perfil', [ParceiroController::class, 'perfil']);
+
         Route::get('/documentos', [DocumentoController::class, 'index']);
         Route::post('/documentos', [DocumentoController::class, 'store']);
         Route::get('/documentos/{id}/download', [DocumentoController::class, 'download']);
@@ -60,7 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Alteração de status e exclusão de documentos (somente admin geral)
+    | Gerenciamento de Documentos e Parceiros - Apenas Administrador Geral
     |--------------------------------------------------------------------------
     */
     Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
@@ -72,11 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/parceiros/{id}', [ParceiroController::class, 'show']);
         Route::put('/parceiros/{id}', [ParceiroController::class, 'update']);
         Route::delete('/parceiros/{id}', [ParceiroController::class, 'destroy']);
+        Route::put('/parceiros/{id}/toggle-status', [ParceiroController::class, 'toggleStatus']);
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Admin da empresa parceira pode gerenciar os usuários da sua empresa
+    | Gerenciamento de Usuários do Parceiro - Admin Parceiro
     |--------------------------------------------------------------------------
     */
     Route::middleware('admin_parceiro')->group(function () {

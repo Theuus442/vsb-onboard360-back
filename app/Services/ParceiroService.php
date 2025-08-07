@@ -61,7 +61,7 @@ class ParceiroService
     public function toggleStatus($id)
     {
         $parceiro = Parceiro::findOrFail($id);
-        $parceiro->status = $parceiro->status === 'Ativa' ? 'Inativa' : 'Ativa';
+        $parceiro->status = $parceiro->status === 'ativo' ? 'inativo' : 'ativo';
         $parceiro->save();
         return $parceiro;
     }
