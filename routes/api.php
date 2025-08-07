@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     | Rotas de Usuários - Somente Administrador Geral
     |--------------------------------------------------------------------------
     */
-    Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
+    Route::middleware('administrador')->group(function () {
         Route::get('/usuarios', [UsuarioController::class, 'index']);
         Route::post('/usuarios', [UsuarioController::class, 'store']);
         Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     | Gerenciamento de Documentos e Parceiros - Apenas Administrador Geral
     |--------------------------------------------------------------------------
     */
-    Route::middleware(App\Http\Middleware\GarantirUsuarioAdministrador::class)->group(function () {
+    Route::middleware('administrador')->group(function () {
         Route::put('/documentos/{id}/status', [DocumentoController::class, 'alterarStatus']);
         Route::delete('/documentos/{id}', [DocumentoController::class, 'destroy']);
 
